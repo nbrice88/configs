@@ -1,10 +1,37 @@
-execute pathogen#infect()
+set nocompatible
+filetype off
+
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+Plugin 'vim-scripts/ReplaceWithRegister'
+Plugin 'w0rp/ale'
+Plugin 'mattn/emmet-vim'
+Plugin 'junegunn/fzf.vim'
+Plugin 'sjl/gundo.vim'
+Plugin 'itchyny/lightline.vim'
+Plugin 'taohex/lightline-buffer'
+Plugin 'scrooloose/nerdtree'
+Plugin 'tomtom/tlib_vim'
+Plugin 'MarcWeber/vim-addon-mw-utils'
+Plugin 'altercation/vim-colors-solarized'
+Plugin 'dodie/vim-disapprove-deep-indentation'
+Plugin 'severin-lemaignan/vim-minimap'
+Plugin 'garbas/vim-snipmate'
+Plugin 'honza/vim-snippets'
+Plugin 'tpope/vim-surround'
+Plugin 'Valloric/MatchTagAlways'
+Plugin 'vim-scripts/tComment'
+Plugin 'tpope/vim-fugitive'
+Plugin 'airblade/vim-gitgutter'
+Plugin 'hail2u/vim-css3-syntax'
+Plugin 'pangloss/vim-javascript'
+call vundle#end()
 
 set showcmd
-set showmode
+set noshowmode
 
 filetype on
-filetype plugin on
+filetype plugin indent on
 syntax on
 
 set autoindent
@@ -33,10 +60,15 @@ set smartcase
 set incsearch
 set hlsearch
 set hidden
-
+set showtabline=2 " Always show tabline
 set nocompatible
 set laststatus=2
 set cursorline
+set cursorcolumn
+
+if !has('gui_running')
+  set t_Co=256
+endif
 
 filetype indent on
 set lazyredraw
@@ -44,6 +76,9 @@ set showmatch
 
 set relativenumber
 set number
+
+set grepprg=rg\ --vimgrep
+set rtp+=/usr/local/opt/fzf
 
 inoremap jj <Esc>
 
@@ -88,7 +123,7 @@ vnoremap <leader>d "_d
 " replace currently selected text with default register
 " without yanking
 vnoremap <leader>p "_dP
-map <leader>n :NERDTreeToggle<CR>
+map <leader>o :NERDTreeToggle<CR>
 
 nnoremap <leader>bq :bp <BAR> bd #<CR>
 nnoremap <leader>wq :w<CR>:bd<CR>
@@ -97,10 +132,9 @@ nnoremap <leader>wQ :w<CR>:bd<CR>:q<CR>
 nnoremap <leader>vsp :vsp<CR>
 nnoremap <leader>sp :sp<CR>
 
-nnoremap <leader>l :bn<CR>
-nnoremap <leader>h :bp<CR>
-
-nnoremap <leader>c V
+nnoremap gl :bn<CR>
+nnoremap gh :bp<CR>
+nnoremap gd :bd<CR>
 
 set splitbelow
 set splitright
@@ -111,10 +145,69 @@ nnoremap <C-K> <C-W>k
 nnoremap <C-L> <C-W>l
 nnoremap <C-H> <C-W>h
 
+nnoremap <leader>f :Find
+nnoremap <leader>t :Files
+nnoremap <leader>r :History
+
 let g:Powerline_symbols = 'fancy'
 let g:numbers_exclude = ['unite', 'tagbar', 'startify', 'gundo', 'vimshell', 'w3m', 'nerdtree', 'minibuxexpl']
 let g:LookOfDisapprovalTabTreshold=5
 let g:LookOfDisapprovalSpaceTreshold=(&tabstop*5)
+" use lightline-buffer in lightline
+let g:lightline = {
+    \ 'colorscheme': 'powerline',
+    \ 'tabline': {
+    \   'left': [ [ 'bufferinfo' ],
+    \             [ 'separator' ],
+    \             [ 'bufferbefore', 'buffercurrent', 'bufferafter' ], ],
+    \   'right': [ [ 'close' ], ],
+    \ },
+    \ 'component_expand': {
+    \   'buffercurrent': 'lightline#buffer#buffercurrent',
+    \   'bufferbefore': 'lightline#buffer#bufferbefore',
+    \   'bufferafter': 'lightline#buffer#bufferafter',
+    \ },
+    \ 'component_type': {
+    \   'buffercurrent': 'tabsel',
+    \   'bufferbefore': 'raw',
+    \   'bufferafter': 'raw',
+    \ },
+    \ 'component_function': {
+    \   'bufferinfo': 'lightline#buffer#bufferinfo',
+    \ },
+    \ 'component': {
+    \   'separator': '',
+    \ },
+    \ }
+" lightline-buffer ui settings
+" replace these symbols with ascii characters if your environment does not support unicode
+let g:lightline_buffer_logo = ' '
+let g:lightline_buffer_readonly_icon = ''
+let g:lightline_buffer_modified_icon = '✭'
+let g:lightline_buffer_git_icon = ' '
+let g:lightline_buffer_ellipsis_icon = '..'
+let g:lightline_buffer_expand_left_icon = '◀ '
+let g:lightline_buffer_expand_right_icon = ' ▶'
+let g:lightline_buffer_active_buffer_left_icon = ''
+let g:lightline_buffer_active_buffer_right_icon = ''
+let g:lightline_buffer_separator_icon = '  '
+
+" lightline-buffer function settings
+let g:lightline_buffer_show_bufnr = 1
+let g:lightline_buffer_rotate = 0
+let g:lightline_buffer_fname_mod = ':t'
+let g:lightline_buffer_excludes = ['vimfiler']
+
+let g:lightline_buffer_maxflen = 30
+let g:lightline_buffer_maxfextlen = 3
+let g:lightline_buffer_minflen = 16
+let g:lightline_buffer_minfextlen = 3
+let g:lightline_buffer_reservelen = 20
+
+let g:minimap_show='<leader>ms'
+let g:minimap_update='<leader>mu'
+let g:minimap_close='<leader>mc'
+let g:minimap_toggle='<leader>mt'
 
 " Nerdtree stuff
 let NERDTreeShowHidden=1      " show hidden files
@@ -150,7 +243,7 @@ function! SaveAndExecutePython()
   endif
 
   silent execute "setlocal filetype=" . s:output_buffer_filetype
-  setlocal bufhidden=delete
+   setlocal bufhidden=delete
   setlocal buftype=nofile
   setlocal noswapfile
   setlocal nobuflisted
@@ -178,6 +271,19 @@ function! SaveAndExecutePython()
   setlocal readonly
   setlocal nomodifiable
 endfunction
+
+" --column: Show column number
+" --line-number: Show line number
+" --no-heading: Do not show file headings in results
+" --fixed-strings: Search term as a literal string
+" --ignore-case: Case insensitive search
+" --no-ignore: Do not respect .gitignore, etc...
+" --hidden: Search hidden files and folders
+" --follow: Follow symlinks
+" --glob: Additional conditions for search (in this case ignore everything in the .git/ folder)
+" --color: Search color options
+
+command! -bang -nargs=* Find call fzf#vim#grep('rg --column --line-number --no-heading --fixed-strings --ignore-case --no-ignore --hidden --follow --glob "!.git/*" --color "always" '.shellescape(<q-args>), 1, <bang>0)
 
 " Bind F5 to save file if modified and execute python script in a buffer.
 " Note: This is a normal mode bind because in insert mode F5 would insert a "<F5>" into the text.

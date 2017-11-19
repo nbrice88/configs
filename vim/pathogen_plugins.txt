@@ -5,3 +5,5 @@ https://github.com/fholgado/minibufexpl.vim
 https://github.com/scrooloose/nerdtree.git
 https://github.com/altercation/vim-colors-solarized.git
 https://github.com/dodie/vim-disapprove-deep-indentation.git
+https://github.com/itchyny/lightline.vim
+https://github.com/taohex/lightline-buffer.git
