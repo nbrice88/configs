@@ -1,0 +1,7 @@
+https://github.com/vim-scripts/Gundo.git
+https://github.com/vim-scripts/ReplaceWithRegister.git
+https://github.com/w0rp/ale.git
+https://github.com/fholgado/minibufexpl.vim
+https://github.com/scrooloose/nerdtree.git
+https://github.com/altercation/vim-colors-solarized.git
+https://github.com/dodie/vim-disapprove-deep-indentation.git
