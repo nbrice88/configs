@@ -1,5 +1,5 @@
 # Path to your oh-my-zsh installation.
-export ZSH=/Users/nicholas/.oh-my-zsh
+export ZSH=/Users/nick/.oh-my-zsh
 
 # Set name of the theme to load.
 # Look in ~/.oh-my-zsh/themes/
@@ -136,13 +136,24 @@ xcodeSimBuild() {
 export TERM="xterm-256color"
 export PATH=$PATH:/opt/local/bin
 
-DEFUALT_USER="nicholas"
+DEFUALT_USER="nick"
 
 export GOPATH=$HOME/Dev/Learn/go
-export PROVISIONING_HOME=/Users/nicholas/Library/MobileDevice/Provisioning\ Profiles
+export PROVISIONING_HOME=/Users/nick/Library/MobileDevice/Provisioning\ Profiles
+
+# --files: List files that would be searched but do not search
+# --no-ignore: Do not respect .gitignore, etc...
+# --hidden: Search hidden files and folders
+# --follow: Follow symlinks
+# --glob: Additional conditions for search (in this case ignore everything in the .git/ folder)
+
+export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow -g "!{.git,node_modules}/*" 2> /dev/null'
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 
 # rbenv init
 if which rbenv > /dev/null;
   then eval "$(rbenv init -)"
 fi
 export PATH="$HOME/.rbenv/bin:$PATH"
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
